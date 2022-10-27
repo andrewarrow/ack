@@ -2,7 +2,9 @@ package screen
 
 import (
 	"ack/files"
+	"fmt"
 	"log"
+	"strings"
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
@@ -35,9 +37,6 @@ func (t *Transfer) Run() {
 	setList("", t.transfer)
 	t.transfer.Border = false
 	setList("Destination (client)", t.destination)
-
-	//t.source.Rows = strings.Split(t.text, "\n")
-	//t.source.Title = fmt.Sprintf("Source %d %s", len(t.text), "LISTEN")
 
 	grid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
@@ -101,6 +100,9 @@ func (t *Transfer) handleEnter() {
 		t.destination.Rows = append(t.destination.Rows, "ESTABLISHED")
 		t.source.SelectedRow = 0
 		t.destination.SelectedRow = 0
+	} else if t.step == 6 {
+		t.source.Rows = append(t.source.Rows, strings.Split(t.text, "\n")...)
+		t.source.Title = fmt.Sprintf("Source %d", len(t.text))
 	}
 	t.step++
 }
