@@ -28,6 +28,8 @@ func (s *Server) Listen(port int) {
 }
 
 func (c *Client) Connect(port int) {
+	seg := Segment{}
+	seg.Header.Sequence = 100
 	c.State = "SYN-SENT"
 }
 
