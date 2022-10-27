@@ -91,18 +91,20 @@ func (t *Transfer) handleEnter() {
 		t.source.Rows = append(t.source.Rows, "ESTABLISHED")
 		t.source.SelectedRow = 2
 	} else if t.step == 5 {
-		t.source.Rows = []string{}
+		t.source.Rows = []string{"ESTABLISHED"}
 		t.transfer.Rows = []string{}
-		t.destination.Rows = []string{}
-		t.source.Rows = append(t.source.Rows, "ESTABLISHED")
-		t.destination.Rows = append(t.destination.Rows, "ESTABLISHED")
+		t.destination.Rows = []string{"ESTABLISHED"}
 		t.source.SelectedRow = 0
 		t.destination.SelectedRow = 0
 	} else if t.step == 6 {
 		t.source.Rows = append(t.source.Rows, strings.Split(t.text, "\n")...)
 		t.source.Title = fmt.Sprintf("Source %d", len(t.text))
 	} else if t.step == 7 {
+		t.source.Rows = []string{"ESTABLISHED"}
 		segments := tcp.BreakIntoSegments(t.text)
+		for i, segment := range segments {
+			t.source.Rows = append(t.source.Rows, fmt.Sprintf("%d %s", 301+i, segment))
+		}
 	}
 	t.step++
 }
