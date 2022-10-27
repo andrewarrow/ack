@@ -2,9 +2,7 @@ package screen
 
 import (
 	"ack/files"
-	"fmt"
 	"log"
-	"strings"
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
@@ -15,6 +13,7 @@ type Transfer struct {
 	transfer    *widgets.List
 	destination *widgets.List
 	text        string
+	step        int
 }
 
 func NewTransfer() *Transfer {
@@ -32,13 +31,13 @@ func (t *Transfer) Run() {
 	}
 	defer ui.Close()
 
-	setList("Source", t.source)
+	setList("Source (server)", t.source)
 	setList("", t.transfer)
 	t.transfer.Border = false
-	setList("Destination", t.destination)
+	setList("Destination (client)", t.destination)
 
-	t.source.Rows = strings.Split(t.text, "\n")
-	t.source.Title = fmt.Sprintf("Source %d", len(t.text))
+	//t.source.Rows = strings.Split(t.text, "\n")
+	//t.source.Title = fmt.Sprintf("Source %d %s", len(t.text), "LISTEN")
 
 	grid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
@@ -74,8 +73,15 @@ func (t *Transfer) Run() {
 
 func (t *Transfer) handleEnter() {
 	//tcp.MAX_SEGMENT_SIZE
-	t.transfer.Rows = append(t.transfer.Rows,
-		fmt.Sprintf("Segment %d", len(t.transfer.Rows)))
+	//t.transfer.Rows = append(t.transfer.Rows,
+	//	fmt.Sprintf("Segment %d", len(t.transfer.Rows)))
+	if t.step == 0 {
+		t.source.Rows = append(t.source.Rows, "LISTEN on port 80")
+	} else if t.step == 1 {
+		t.destination.Rows = append(t.destination.Rows, "SYN-SENT")
+		t.transfer.Rows = append(t.transfer.Rows, "<-- SYN")
+	}
+	t.step++
 }
 
 func setList(title string, l *widgets.List) {
