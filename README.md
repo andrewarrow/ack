@@ -1,16 +1,19 @@
-# infinity-dog
-datadog api
+# ack
+tcp simulation
 
-# keys
+# the playlist (2022)
 
-https://app.datadoghq.com/organization-settings/api-keys
+https://www.themoviedb.org/tv/210195-the-playlist
 
-https://app.datadoghq.com/organization-settings/application-keys
+In episode 3 of "The Playlist" (TV show drama about the history of Spotify) they
+go into details about how they creatively broke the TCP rules and accepted
+a little bit of packet loss to gain speed.
 
-```
-export DOG_API_KEY="api_key_goes_here"
-export DOG_APP_KEY="application_key_goes_here"
-export DOG_BASE="environment:prod"
-```
+https://www.reddit.com/r/networking/comments/ydbyu3/a_tv_show_about_spotify_and_udp/
 
+https://patents.google.com/patent/US20030079041A1/en
 
+# simulation
+
+This project's goal is to create a simulation of TCP in golang to demonstrate how
+it all works.
