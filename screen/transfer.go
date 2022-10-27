@@ -17,6 +17,7 @@ type Transfer struct {
 	destination *widgets.List
 	text        string
 	step        int
+	segments    []string
 }
 
 func NewTransfer() *Transfer {
@@ -25,6 +26,7 @@ func NewTransfer() *Transfer {
 	t.transfer = widgets.NewList()
 	t.destination = widgets.NewList()
 	t.text = files.ReadFile("data/antony_and_cleopatra.txt")
+	t.segments = tcp.BreakIntoSegments(t.text)
 	return &t
 }
 
@@ -98,13 +100,20 @@ func (t *Transfer) handleEnter() {
 		t.destination.SelectedRow = 0
 	} else if t.step == 6 {
 		t.source.Rows = append(t.source.Rows, strings.Split(t.text, "\n")...)
-		t.source.Title = fmt.Sprintf("Source %d", len(t.text))
+		t.source.Title = fmt.Sprintf("Source %d / %d = %.2f", len(t.text), tcp.MAX_SEGMENT_SIZE, float64(len(t.text))/float64(tcp.MAX_SEGMENT_SIZE))
 	} else if t.step == 7 {
 		t.source.Rows = []string{"ESTABLISHED"}
-		segments := tcp.BreakIntoSegments(t.text)
-		for i, segment := range segments {
+		for i, segment := range t.segments {
 			t.source.Rows = append(t.source.Rows, fmt.Sprintf("%d %s", 301+i, segment))
 		}
+	} else if t.step == 8 {
+		t.source.Rows = []string{"ESTABLISHED"}
+		t.segments = t.segments[1:]
+		for i, segment := range t.segments {
+			t.source.Rows = append(t.source.Rows, fmt.Sprintf("%d %s", 302+i, segment))
+		}
+		t.transfer.Rows = append(t.transfer.Rows, "<301,512> -->")
+		t.transfer.SelectedRow = 0
 	}
 	t.step++
 }
