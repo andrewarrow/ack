@@ -79,7 +79,20 @@ func (t *Transfer) handleEnter() {
 		t.source.Rows = append(t.source.Rows, "LISTEN on port 80")
 	} else if t.step == 1 {
 		t.destination.Rows = append(t.destination.Rows, "SYN-SENT")
-		t.transfer.Rows = append(t.transfer.Rows, "<-- SYN")
+		t.transfer.Rows = append(t.transfer.Rows, "<-- <100,SYN>")
+	} else if t.step == 2 {
+		t.source.Rows = append(t.source.Rows, "SYN-RECEIVED")
+		t.source.SelectedRow = 1
+		t.transfer.Rows = append(t.transfer.Rows, "<300,101,SYN,ACK> -->")
+		t.transfer.SelectedRow = 1
+	} else if t.step == 3 {
+		t.destination.Rows = append(t.destination.Rows, "ESTABLISHED")
+		t.destination.SelectedRow = 1
+		t.transfer.Rows = append(t.transfer.Rows, "<-- <101,301,ACK>")
+		t.transfer.SelectedRow = 2
+	} else if t.step == 4 {
+		t.source.Rows = append(t.source.Rows, "ESTABLISHED")
+		t.source.SelectedRow = 2
 	}
 	t.step++
 }
