@@ -19,3 +19,18 @@ type Header struct {
 	Urgent              uint16
 	Options             []uint32 // up to 10
 }
+
+func BreakIntoSegments(text string) []string {
+	if len(text) < MAX_SEGMENT_SIZE {
+		return []string{text}
+	}
+	segments := []string{}
+	for {
+		segment := text[0:MAX_SEGMENT_SIZE]
+		segments = append(segments, segment)
+		if true {
+			break
+		}
+	}
+	return segments
+}

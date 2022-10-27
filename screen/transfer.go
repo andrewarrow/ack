@@ -2,6 +2,7 @@ package screen
 
 import (
 	"ack/files"
+	"ack/tcp"
 	"fmt"
 	"log"
 	"strings"
@@ -71,9 +72,6 @@ func (t *Transfer) Run() {
 }
 
 func (t *Transfer) handleEnter() {
-	//tcp.MAX_SEGMENT_SIZE
-	//t.transfer.Rows = append(t.transfer.Rows,
-	//	fmt.Sprintf("Segment %d", len(t.transfer.Rows)))
 	if t.step == 0 {
 		t.source.Rows = append(t.source.Rows, "LISTEN on port 80")
 	} else if t.step == 1 {
@@ -103,6 +101,8 @@ func (t *Transfer) handleEnter() {
 	} else if t.step == 6 {
 		t.source.Rows = append(t.source.Rows, strings.Split(t.text, "\n")...)
 		t.source.Title = fmt.Sprintf("Source %d", len(t.text))
+	} else if t.step == 7 {
+		segments := tcp.BreakIntoSegments(t.text)
 	}
 	t.step++
 }
