@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ack/screen"
 	"math/rand"
 	"os"
 	"time"
@@ -16,6 +17,7 @@ func main() {
 	command := os.Args[1]
 
 	if command == "run" {
+		screen.Setup()
 	} else if command == "help" {
 		PrintHelp()
 	}
