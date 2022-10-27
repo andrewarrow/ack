@@ -1,14 +1,20 @@
 package tcp
 
-const FIN = 0 // finish
-const SYN = 1 // synchronize
-const RST = 2 // reset
-const PSH = 3 // push, Asks to push the buffered data
-const ACK = 4 // ack, Acknowledgment
-const URG = 5 // urgent
-const ECE = 6 // Echo of Congestion Encountered
-const CWR = 7 // Congestion window reduced
-const NS = 8  // Explicit Congestion Notification Nonce
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
+
+const FIN = 15 // finish
+const SYN = 14 // synchronize
+const RST = 13 // reset
+const PSH = 12 // push, Asks to push the buffered data
+const ACK = 11 // ack, Acknowledgment
+const URG = 10 // urgent
+const ECE = 9  // Echo of Congestion Encountered
+const CWR = 8  // Congestion window reduced
+const NS = 7   // Explicit Congestion Notification Nonce
 
 type Header struct {
 	Source              uint16
@@ -27,5 +33,17 @@ func NewHeader() *Header {
 	return &h
 }
 
-func (h *Header) SetFlag(flag byte, value byte) {
+func (h *Header) SetFlag(flag int, value byte) {
+	bitString := fmt.Sprintf("%016b", h.OffsetReservedFlags)
+	buffer := []string{}
+	for i, c := range bitString {
+		char := fmt.Sprintf("%c", c)
+		if i == flag {
+			char = fmt.Sprintf("%d", value)
+		}
+		buffer = append(buffer, char)
+	}
+
+	newValue, _ := strconv.ParseInt(strings.Join(buffer, ""), 2, 64)
+	h.OffsetReservedFlags = uint16(newValue)
 }
