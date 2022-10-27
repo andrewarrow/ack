@@ -39,4 +39,8 @@ rearranges out-of-order data and even helps minimize network congestion
 to reduce the occurrence of the other problems.
 
 https://en.wikipedia.org/wiki/Transmission_Control_Protocol
+
+
+Transmission Control Protocol accepts data from a data stream,
+divides it into chunks, and adds a TCP header creating a TCP segment.
 */
