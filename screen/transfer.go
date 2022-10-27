@@ -93,6 +93,14 @@ func (t *Transfer) handleEnter() {
 	} else if t.step == 4 {
 		t.source.Rows = append(t.source.Rows, "ESTABLISHED")
 		t.source.SelectedRow = 2
+	} else if t.step == 5 {
+		t.source.Rows = []string{}
+		t.transfer.Rows = []string{}
+		t.destination.Rows = []string{}
+		t.source.Rows = append(t.source.Rows, "ESTABLISHED")
+		t.destination.Rows = append(t.destination.Rows, "ESTABLISHED")
+		t.source.SelectedRow = 0
+		t.destination.SelectedRow = 0
 	}
 	t.step++
 }
