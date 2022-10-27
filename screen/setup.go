@@ -1,7 +1,9 @@
 package screen
 
 import (
+	"ack/files"
 	"log"
+	"strings"
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
@@ -22,6 +24,9 @@ func Setup() {
 	SetList("", transfer)
 	transfer.Border = false
 	SetList("Destination", destination)
+
+	text := files.ReadFile("data/antony_and_cleopatra.txt")
+	source.Rows = strings.Split(text, "\n")
 
 	grid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
