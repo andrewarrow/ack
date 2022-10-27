@@ -21,10 +21,10 @@ func Setup() {
 	}
 	defer ui.Close()
 
-	SetList("Source", source)
-	SetList("", transfer)
+	setList("Source", source)
+	setList("", transfer)
 	transfer.Border = false
-	SetList("Destination", destination)
+	setList("Destination", destination)
 
 	text := files.ReadFile("data/antony_and_cleopatra.txt")
 	source.Rows = strings.Split(text, "\n")
@@ -57,13 +57,19 @@ func Setup() {
 				payload := e.Payload.(ui.Resize)
 				grid.SetRect(0, 0, payload.Width, payload.Height)
 				ui.Clear()
+			case "<Enter>":
+				handleEnter()
 			}
 		}
 		ui.Render(grid)
 	}
 }
 
-func SetList(title string, l *widgets.List) {
+func handleEnter() {
+	transfer.Rows = append(transfer.Rows, "Packet 1")
+}
+
+func setList(title string, l *widgets.List) {
 	l.SelectedRowStyle.Fg = ui.ColorWhite
 	l.SelectedRowStyle.Bg = ui.ColorMagenta
 	l.TextStyle.Fg = ui.ColorWhite
