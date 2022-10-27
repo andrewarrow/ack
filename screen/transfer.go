@@ -10,25 +10,35 @@ import (
 	"github.com/gizak/termui/v3/widgets"
 )
 
-var shutdown bool
-var source = widgets.NewList()
-var transfer = widgets.NewList()
-var destination = widgets.NewList()
+type Transfer struct {
+	source      *widgets.List
+	transfer    *widgets.List
+	destination *widgets.List
+	text        string
+}
 
-func Setup() {
+func NewTransfer() *Transfer {
+	t := Transfer{}
+	t.source = widgets.NewList()
+	t.transfer = widgets.NewList()
+	t.destination = widgets.NewList()
+	t.text = files.ReadFile("data/antony_and_cleopatra.txt")
+	return &t
+}
+
+func (t *Transfer) Run() {
 	if err := ui.Init(); err != nil {
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
 
-	setList("Source", source)
-	setList("", transfer)
-	transfer.Border = false
-	setList("Destination", destination)
+	setList("Source", t.source)
+	setList("", t.transfer)
+	t.transfer.Border = false
+	setList("Destination", t.destination)
 
-	text := files.ReadFile("data/antony_and_cleopatra.txt")
-	source.Rows = strings.Split(text, "\n")
-	source.Title = fmt.Sprintf("Source %d", len(text))
+	t.source.Rows = strings.Split(t.text, "\n")
+	t.source.Title = fmt.Sprintf("Source %d", len(t.text))
 
 	grid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
@@ -36,18 +46,15 @@ func Setup() {
 
 	grid.Set(
 		ui.NewRow(1.0,
-			ui.NewCol(0.33, source),
-			ui.NewCol(0.33, transfer),
-			ui.NewCol(0.33, destination),
+			ui.NewCol(0.33, t.source),
+			ui.NewCol(0.33, t.transfer),
+			ui.NewCol(0.33, t.destination),
 		),
 	)
 
 	ui.Render(grid)
 	uiEvents := ui.PollEvents()
 	for {
-		if shutdown {
-			break
-		}
 		select {
 		case e := <-uiEvents:
 			switch e.ID {
@@ -58,15 +65,17 @@ func Setup() {
 				grid.SetRect(0, 0, payload.Width, payload.Height)
 				ui.Clear()
 			case "<Enter>":
-				handleEnter()
+				t.handleEnter()
 			}
 		}
 		ui.Render(grid)
 	}
 }
 
-func handleEnter() {
-	transfer.Rows = append(transfer.Rows, "Packet 1")
+func (t *Transfer) handleEnter() {
+	//tcp.MAX_SEGMENT_SIZE
+	t.transfer.Rows = append(t.transfer.Rows,
+		fmt.Sprintf("Segment %d", len(t.transfer.Rows)))
 }
 
 func setList(title string, l *widgets.List) {

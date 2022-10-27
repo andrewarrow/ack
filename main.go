@@ -17,7 +17,8 @@ func main() {
 	command := os.Args[1]
 
 	if command == "run" {
-		screen.Setup()
+		t := screen.NewTransfer()
+		t.Run()
 	} else if command == "help" {
 		PrintHelp()
 	}

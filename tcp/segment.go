@@ -1,5 +1,8 @@
 package tcp
 
+const MAX_SEGMENT_SIZE = 512       // MSS
+const MAX_TRANSMISSION_UNIT = 1500 // MTU 1460 bytes, 40 bytes headers
+
 type Segment struct {
 	Header Header
 	Data   []byte
