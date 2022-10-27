@@ -30,6 +30,8 @@ type Header struct {
 
 func NewHeader() *Header {
 	h := Header{}
+	newValue, _ := strconv.ParseInt("1111000000000000", 2, 64)
+	h.OffsetReservedFlags = uint16(newValue)
 	return &h
 }
 
