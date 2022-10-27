@@ -1,5 +1,7 @@
 package tcp
 
+import "fmt"
+
 type Server struct {
 	State string
 	Port  int
@@ -28,8 +30,10 @@ func (s *Server) Listen(port int) {
 }
 
 func (c *Client) Connect(port int) {
-	seg := Segment{}
+	seg := NewSegment()
 	seg.Header.Sequence = 100
+	seg.Header.SetFlag(SYN, 1)
+	fmt.Println(seg.Header.String())
 	c.State = "SYN-SENT"
 }
 

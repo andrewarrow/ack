@@ -33,6 +33,20 @@ func NewHeader() *Header {
 	return &h
 }
 
+func (h *Header) String() string {
+	bitString := fmt.Sprintf("%016b", h.OffsetReservedFlags)
+	buffer := []string{}
+	for i, c := range bitString {
+		char := fmt.Sprintf("%c", c)
+		if char == "1" && i == SYN {
+			buffer = append(buffer, "SYN")
+		}
+	}
+	flags := strings.Join(buffer, ",")
+	return fmt.Sprintf("%d %s", h.Sequence, flags)
+}
+
+// TODO replace string use with golang bit logic if performance needed
 func (h *Header) SetFlag(flag int, value byte) {
 	bitString := fmt.Sprintf("%016b", h.OffsetReservedFlags)
 	buffer := []string{}
