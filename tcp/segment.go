@@ -21,16 +21,15 @@ type Header struct {
 }
 
 func BreakIntoSegments(text string) []string {
-	if len(text) < MAX_SEGMENT_SIZE {
-		return []string{text}
-	}
 	segments := []string{}
 	for {
-		segment := text[0:MAX_SEGMENT_SIZE]
-		segments = append(segments, segment)
-		if true {
+		if len(text) < MAX_SEGMENT_SIZE {
+			segments = append(segments, text)
 			break
 		}
+		segment := text[0:MAX_SEGMENT_SIZE]
+		segments = append(segments, segment)
+		text = text[MAX_SEGMENT_SIZE:]
 	}
 	return segments
 }
