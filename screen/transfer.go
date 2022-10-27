@@ -117,6 +117,13 @@ func (t *Transfer) handleEnter() {
 		t.transfer.Rows = append(t.transfer.Rows, "<-- <302,ACK>")
 		t.transfer.SelectedRow = 1
 		t.destination.Rows = append(t.destination.Rows, fmt.Sprintf("%d %s", 301, t.segments[0]))
+	} else if t.step == 10 {
+		t.source.Rows = []string{"ESTABLISHED"}
+		for i, segment := range t.segments[2:] {
+			t.source.Rows = append(t.source.Rows, fmt.Sprintf("%d %s", 303+i, segment))
+		}
+		t.transfer.Rows = append(t.transfer.Rows, "<302,512> -->")
+		t.transfer.SelectedRow = 2
 	}
 	t.step++
 }
