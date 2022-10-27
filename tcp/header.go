@@ -32,6 +32,8 @@ func NewHeader() *Header {
 	h := Header{}
 	newValue, _ := strconv.ParseInt("1111000000000000", 2, 64)
 	h.OffsetReservedFlags = uint16(newValue)
+	h.Window = 65535
+	h.Checksum = 65535
 	return &h
 }
 
