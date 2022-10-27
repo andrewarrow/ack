@@ -2,6 +2,7 @@ package screen
 
 import (
 	"ack/files"
+	"fmt"
 	"log"
 	"strings"
 
@@ -27,6 +28,7 @@ func Setup() {
 
 	text := files.ReadFile("data/antony_and_cleopatra.txt")
 	source.Rows = strings.Split(text, "\n")
+	source.Title = fmt.Sprintf("Source %d", len(text))
 
 	grid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
