@@ -1,10 +1,11 @@
 package tcp
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Server struct {
 	State    string
-	Port     int
 	Outgoing chan *Segment
 	Incoming chan *Segment
 }
@@ -17,9 +18,8 @@ func NewServer() *Server {
 	return &s
 }
 
-func (s *Server) Listen(port int) {
+func (s *Server) Listen(port uint16) {
 	s.State = "LISTEN"
-	s.Port = port
 	go s.HandleIncoming()
 }
 
@@ -44,10 +44,11 @@ func NewClient() *Client {
 	return &c
 }
 
-func (c *Client) Connect(port int) {
+func (c *Client) Connect(port uint16) {
 	seg := NewSegment()
 	seg.Header.Sequence = 100
 	seg.Header.SetFlag(SYN, 1)
+	seg.Header.Destination = port
 	fmt.Println(seg.Header.String())
 	c.Outgoing <- seg
 	c.State = "SYN-SENT"
@@ -56,5 +57,6 @@ func (c *Client) Connect(port int) {
 func (c *Client) HandleOutgoing() {
 	for seg := range c.Outgoing {
 		fmt.Println("seg!", seg)
+		Transport <- seg
 	}
 }

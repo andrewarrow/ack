@@ -1,4 +1,1 @@
 package network
-
-func Send() {
-}
