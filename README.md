@@ -5,7 +5,7 @@ tcp simulation
 
 https://www.themoviedb.org/tv/210195-the-playlist
 
-In episode 3 of "The Playlist" (TV show drama about the history of Spotify) they
+In episode 4 of "The Playlist" (TV show drama about the history of Spotify) they
 go into details about how they creatively broke the TCP rules and accepted
 a little bit of packet loss to gain speed.
 
