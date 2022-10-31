@@ -3,11 +3,14 @@ package screen
 import (
 	"fmt"
 	"log"
+	"sync"
 	"time"
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 )
+
+var mutex sync.Mutex
 
 type TransferWithOptions struct {
 	source             *widgets.List
@@ -61,7 +64,8 @@ func (t *TransferWithOptions) Run() {
 
 	ui.Render(grid)
 	uiEvents := ui.PollEvents()
-	ticker := time.NewTicker(time.Millisecond * 944).C
+	ticker1 := time.NewTicker(time.Millisecond * 944).C
+	ticker2 := time.NewTicker(time.Millisecond * 1944).C
 	for {
 		select {
 		case e := <-uiEvents:
@@ -73,15 +77,24 @@ func (t *TransferWithOptions) Run() {
 				grid.SetRect(0, 0, payload.Width, payload.Height)
 				ui.Clear()
 			}
-		case <-ticker:
+		case <-ticker1:
 			t.advanceTransfer()
+		case <-ticker2:
+			t.readBuffer()
 		}
 		ui.Render(grid)
 	}
 }
 
 func (t *TransferWithOptions) advanceTransfer() {
+	mutex.Lock()
 	t.destinationBuffer.Rows = append([]string{fmt.Sprintf("Seg %03d", t.step)}, t.destinationBuffer.Rows...)
+	mutex.Unlock()
 	t.step++
 	t.destinationBuffer.Title = fmt.Sprintf("Size %d", len(t.destinationBuffer.Rows))
+}
+
+func (t *TransferWithOptions) readBuffer() {
+	mutex.Lock()
+	mutex.Unlock()
 }
