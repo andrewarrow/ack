@@ -1,7 +1,10 @@
 package screen
 
 import (
+	"fmt"
 	"log"
+	"math/rand"
+	"time"
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
@@ -49,6 +52,7 @@ func (c *Credits) Run() {
 
 	ui.Render(grid)
 	uiEvents := ui.PollEvents()
+	ticker := time.NewTicker(time.Millisecond * 144).C
 	for {
 		select {
 		case e := <-uiEvents:
@@ -62,10 +66,21 @@ func (c *Credits) Run() {
 			case "<Enter>":
 				c.handleEnter()
 			}
+		case <-ticker:
+			c.advanceRiver()
 		}
 		ui.Render(grid)
 	}
 }
 
 func (c *Credits) handleEnter() {
+}
+
+func (c *Credits) advanceRiver() {
+	list := []string{"red", "green", "yellow", "blue", "magenta", "cyan", "white"}
+	pick := rand.Intn(len(list))
+	c.transfer.Rows = append([]string{fmt.Sprintf("[ ](bg:%s)", list[pick])}, c.transfer.Rows...)
+	if len(c.transfer.Rows) > 23 {
+		c.transfer.Rows = c.transfer.Rows[0:23]
+	}
 }
