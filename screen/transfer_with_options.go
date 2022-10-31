@@ -3,6 +3,7 @@ package screen
 import (
 	"ack/files"
 	"ack/tcp"
+	"fmt"
 	"log"
 	"time"
 
@@ -28,6 +29,7 @@ func NewTransferWithOptions() *TransferWithOptions {
 	t.destinationProgram = widgets.NewList()
 	t.text = files.ReadFile("data/antony_and_cleopatra.txt")
 	t.segments = tcp.BreakIntoSegments(t.text)
+	t.step = 301
 	return &t
 }
 
@@ -80,5 +82,7 @@ func (t *TransferWithOptions) Run() {
 }
 
 func (t *TransferWithOptions) advanceTransfer() {
-	t.destinationBuffer.Rows = append(t.destinationBuffer.Rows, "foo")
+	t.destinationBuffer.Rows = append(t.destinationBuffer.Rows,
+		fmt.Sprintf("Seg %03d", t.step))
+	t.step++
 }
