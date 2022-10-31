@@ -4,6 +4,7 @@ import (
 	"ack/files"
 	"ack/tcp"
 	"log"
+	"time"
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
@@ -59,6 +60,7 @@ func (t *TransferWithOptions) Run() {
 
 	ui.Render(grid)
 	uiEvents := ui.PollEvents()
+	ticker := time.NewTicker(time.Millisecond * 944).C
 	for {
 		select {
 		case e := <-uiEvents:
@@ -69,13 +71,14 @@ func (t *TransferWithOptions) Run() {
 				payload := e.Payload.(ui.Resize)
 				grid.SetRect(0, 0, payload.Width, payload.Height)
 				ui.Clear()
-			case "<Enter>":
-				t.handleEnter()
 			}
+		case <-ticker:
+			t.advanceTransfer()
 		}
 		ui.Render(grid)
 	}
 }
 
-func (t *TransferWithOptions) handleEnter() {
+func (t *TransferWithOptions) advanceTransfer() {
+	t.destinationBuffer.Rows = append(t.destinationBuffer.Rows, "foo")
 }
