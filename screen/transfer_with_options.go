@@ -81,7 +81,7 @@ func (t *TransferWithOptions) Run() {
 }
 
 func (t *TransferWithOptions) advanceTransfer() {
-	t.destinationBuffer.Rows = append(t.destinationBuffer.Rows,
-		fmt.Sprintf("Seg %03d", t.step))
+	t.destinationBuffer.Rows = append([]string{fmt.Sprintf("Seg %03d", t.step)}, t.destinationBuffer.Rows...)
 	t.step++
+	t.destinationBuffer.Title = fmt.Sprintf("Size %d", len(t.destinationBuffer.Rows))
 }
