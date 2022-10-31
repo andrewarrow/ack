@@ -27,10 +27,13 @@ func (c *Credits) Run() {
 	}
 	defer ui.Close()
 
-	setList("Source (server)", c.source)
-	setList("", c.transfer)
+	setList("Andrew", c.source)
+	setList("github.com/andrewarrow", c.transfer)
 	c.transfer.Border = false
-	setList("Destination (client)", c.destination)
+	setList("Arrow", c.destination)
+
+	c.source.Rows = append(c.source.Rows, "CLICK THAT LIKE BUTTON")
+	c.destination.Rows = append(c.destination.Rows, "SMASH THAT SUBSCRIBE BUTTON")
 
 	grid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
