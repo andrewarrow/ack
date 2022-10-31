@@ -22,6 +22,9 @@ func main() {
 	} else if command == "credits" {
 		c := screen.NewCredits()
 		c.Run()
+	} else if command == "transfer" {
+		t := screen.NewTransferWithOptions()
+		t.Run()
 	} else if command == "help" {
 		PrintHelp()
 	}
