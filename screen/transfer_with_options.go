@@ -1,8 +1,6 @@
 package screen
 
 import (
-	"ack/files"
-	"ack/tcp"
 	"fmt"
 	"log"
 	"time"
@@ -16,9 +14,7 @@ type TransferWithOptions struct {
 	transfer           *widgets.List
 	destinationBuffer  *widgets.List
 	destinationProgram *widgets.List
-	text               string
 	step               int
-	segments           []string
 }
 
 func NewTransferWithOptions() *TransferWithOptions {
@@ -27,8 +23,6 @@ func NewTransferWithOptions() *TransferWithOptions {
 	t.transfer = widgets.NewList()
 	t.destinationBuffer = widgets.NewList()
 	t.destinationProgram = widgets.NewList()
-	t.text = files.ReadFile("data/antony_and_cleopatra.txt")
-	t.segments = tcp.BreakIntoSegments(t.text)
 	t.step = 301
 	return &t
 }
@@ -40,6 +34,11 @@ func (t *TransferWithOptions) Run() {
 	defer ui.Close()
 
 	setList("Source (server)", t.source)
+	t.source.Rows = append(t.source.Rows, "102.7 MB")
+	t.source.Rows = append(t.source.Rows, "102,729,562 bytes")
+	t.source.Rows = append(t.source.Rows, "102,729,562 / 512")
+	t.source.Rows = append(t.source.Rows, "200,643.67578125")
+	t.source.Rows = append(t.source.Rows, "200,644 segments")
 	setList("", t.transfer)
 	t.transfer.Border = false
 	setList("Destination (buffer)", t.destinationBuffer)
