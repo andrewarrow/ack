@@ -3,28 +3,28 @@ package screen
 import (
 	"ack/files"
 	"ack/tcp"
-	"fmt"
 	"log"
-	"strings"
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 )
 
 type TransferWithOptions struct {
-	source      *widgets.List
-	transfer    *widgets.List
-	destination *widgets.List
-	text        string
-	step        int
-	segments    []string
+	source             *widgets.List
+	transfer           *widgets.List
+	destinationBuffer  *widgets.List
+	destinationProgram *widgets.List
+	text               string
+	step               int
+	segments           []string
 }
 
 func NewTransferWithOptions() *TransferWithOptions {
 	t := TransferWithOptions{}
 	t.source = widgets.NewList()
 	t.transfer = widgets.NewList()
-	t.destination = widgets.NewList()
+	t.destinationBuffer = widgets.NewList()
+	t.destinationProgram = widgets.NewList()
 	t.text = files.ReadFile("data/antony_and_cleopatra.txt")
 	t.segments = tcp.BreakIntoSegments(t.text)
 	return &t
@@ -39,7 +39,8 @@ func (t *TransferWithOptions) Run() {
 	setList("Source (server)", t.source)
 	setList("", t.transfer)
 	t.transfer.Border = false
-	setList("Destination (client)", t.destination)
+	setList("Destination (buffer)", t.destinationBuffer)
+	setList("Destination (program)", t.destinationProgram)
 
 	grid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
@@ -49,7 +50,10 @@ func (t *TransferWithOptions) Run() {
 		ui.NewRow(1.0,
 			ui.NewCol(0.33, t.source),
 			ui.NewCol(0.33, t.transfer),
-			ui.NewCol(0.33, t.destination),
+			ui.NewCol(0.33,
+				ui.NewRow(0.5, t.destinationBuffer),
+				ui.NewRow(0.5, t.destinationProgram),
+			),
 		),
 	)
 
@@ -74,56 +78,4 @@ func (t *TransferWithOptions) Run() {
 }
 
 func (t *TransferWithOptions) handleEnter() {
-	if t.step == 0 {
-		t.source.Rows = append(t.source.Rows, "LISTEN on port 80")
-	} else if t.step == 1 {
-		t.destination.Rows = append(t.destination.Rows, "SYN-SENT")
-		t.transfer.Rows = append(t.transfer.Rows, "<-- <100,SYN>")
-	} else if t.step == 2 {
-		t.source.Rows = append(t.source.Rows, "SYN-RECEIVED")
-		t.source.SelectedRow = 1
-		t.transfer.Rows = append(t.transfer.Rows, "<300,101,SYN,ACK> -->")
-		t.transfer.SelectedRow = 1
-	} else if t.step == 3 {
-		t.destination.Rows = append(t.destination.Rows, "ESTABLISHED")
-		t.destination.SelectedRow = 1
-		t.transfer.Rows = append(t.transfer.Rows, "<-- <101,301,ACK>")
-		t.transfer.SelectedRow = 2
-	} else if t.step == 4 {
-		t.source.Rows = append(t.source.Rows, "ESTABLISHED")
-		t.source.SelectedRow = 2
-	} else if t.step == 5 {
-		t.source.Rows = []string{"ESTABLISHED"}
-		t.transfer.Rows = []string{}
-		t.destination.Rows = []string{"ESTABLISHED"}
-		t.source.SelectedRow = 0
-		t.destination.SelectedRow = 0
-	} else if t.step == 6 {
-		t.source.Rows = append(t.source.Rows, strings.Split(t.text, "\n")...)
-		t.source.Title = fmt.Sprintf("Source %d / %d = %.2f", len(t.text), tcp.MAX_SEGMENT_SIZE, float64(len(t.text))/float64(tcp.MAX_SEGMENT_SIZE))
-	} else if t.step == 7 {
-		t.source.Rows = []string{"ESTABLISHED"}
-		for i, segment := range t.segments {
-			t.source.Rows = append(t.source.Rows, fmt.Sprintf("%d %s", 301+i, segment))
-		}
-	} else if t.step == 8 {
-		t.source.Rows = []string{"ESTABLISHED"}
-		for i, segment := range t.segments[1:] {
-			t.source.Rows = append(t.source.Rows, fmt.Sprintf("%d %s", 302+i, segment))
-		}
-		t.transfer.Rows = append(t.transfer.Rows, "<301,512> -->")
-		t.transfer.SelectedRow = 0
-	} else if t.step == 9 {
-		t.transfer.Rows = append(t.transfer.Rows, "<-- <302,ACK>")
-		t.transfer.SelectedRow = 1
-		t.destination.Rows = append(t.destination.Rows, fmt.Sprintf("%d %s", 301, t.segments[0]))
-	} else if t.step == 10 {
-		t.source.Rows = []string{"ESTABLISHED"}
-		for i, segment := range t.segments[2:] {
-			t.source.Rows = append(t.source.Rows, fmt.Sprintf("%d %s", 303+i, segment))
-		}
-		t.transfer.Rows = append(t.transfer.Rows, "<302,512> -->")
-		t.transfer.SelectedRow = 2
-	}
-	t.step++
 }
