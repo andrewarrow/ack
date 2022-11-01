@@ -65,7 +65,7 @@ func (t *TransferWithOptions) Run() {
 	ui.Render(grid)
 	uiEvents := ui.PollEvents()
 	ticker1 := time.NewTicker(time.Millisecond * 944).C
-	ticker2 := time.NewTicker(time.Millisecond * 1944).C
+	ticker2 := time.NewTicker(time.Millisecond * 3944).C
 	for {
 		select {
 		case e := <-uiEvents:
@@ -88,20 +88,28 @@ func (t *TransferWithOptions) Run() {
 
 func (t *TransferWithOptions) advanceTransfer() {
 	mutex.Lock()
+	defer mutex.Unlock()
+	if len(t.destinationBuffer.Rows) == 10 {
+		return
+	}
 	t.destinationBuffer.Rows = append([]string{fmt.Sprintf("Seg %03d", t.step)}, t.destinationBuffer.Rows...)
-	mutex.Unlock()
+	fullString := ""
+	if len(t.destinationBuffer.Rows) == 10 {
+		fullString = "FULL"
+	}
+	t.destinationBuffer.Title = fmt.Sprintf("Size %d %s", len(t.destinationBuffer.Rows), fullString)
 	t.step++
-	t.destinationBuffer.Title = fmt.Sprintf("Size %d", len(t.destinationBuffer.Rows))
 }
 
 func (t *TransferWithOptions) readBuffer() {
 	mutex.Lock()
+	defer mutex.Unlock()
 	item := ""
 	if len(t.destinationBuffer.Rows) > 0 {
 		item = t.destinationBuffer.Rows[len(t.destinationBuffer.Rows)-1]
 		t.destinationBuffer.Rows = t.destinationBuffer.Rows[0 : len(t.destinationBuffer.Rows)-1]
+		t.destinationBuffer.Title = fmt.Sprintf("Size %d", len(t.destinationBuffer.Rows))
 	}
-	mutex.Unlock()
 	if item != "" {
 		t.destinationProgram.Rows = append([]string{item}, t.destinationProgram.Rows...)
 	}
