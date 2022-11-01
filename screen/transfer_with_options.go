@@ -96,10 +96,14 @@ func (t *TransferWithOptions) advanceTransfer() {
 
 func (t *TransferWithOptions) readBuffer() {
 	mutex.Lock()
+	item := ""
 	if len(t.destinationBuffer.Rows) > 0 {
-		item := t.destinationBuffer.Rows[len(t.destinationBuffer.Rows)-1]
+		item = t.destinationBuffer.Rows[len(t.destinationBuffer.Rows)-1]
 		t.destinationBuffer.Rows = t.destinationBuffer.Rows[0 : len(t.destinationBuffer.Rows)-1]
-		t.destinationProgram.Rows = append(t.destinationProgram.Rows, item)
 	}
 	mutex.Unlock()
+	if item != "" {
+		t.destinationProgram.Rows = append([]string{item}, t.destinationProgram.Rows...)
+	}
+	t.destinationProgram.Title = fmt.Sprintf("Size %d", len(t.destinationProgram.Rows))
 }
