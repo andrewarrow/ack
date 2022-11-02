@@ -21,6 +21,8 @@ type TransferWithOptions struct {
 	bufferSize         int
 	wireSpeed          int
 	processSpeed       int
+	totalSegments      int
+	segments           int
 }
 
 func NewTransferWithOptions(bufferSize, wireSpeed, processSpeed int) *TransferWithOptions {
@@ -48,6 +50,9 @@ func (t *TransferWithOptions) Run() {
 	t.source.Rows = append(t.source.Rows, "102,729,562 / 512")
 	t.source.Rows = append(t.source.Rows, "200,643.67578125")
 	t.source.Rows = append(t.source.Rows, "200,644 segments")
+	t.source.Rows = append(t.source.Rows, "200644")
+	t.totalSegments = 200644
+	t.segments = 200644
 	setList("", t.transfer)
 	t.transfer.Border = false
 	setList("Destination (buffer)", t.destinationBuffer)
@@ -98,6 +103,8 @@ func (t *TransferWithOptions) advanceTransfer() {
 	if len(t.destinationBuffer.Rows) == t.bufferSize {
 		return
 	}
+	t.segments--
+	t.source.Rows[5] = fmt.Sprintf("%d", t.segments)
 	t.destinationBuffer.Rows = append([]string{fmt.Sprintf("Seg %03d", t.step)}, t.destinationBuffer.Rows...)
 	fullString := ""
 	if len(t.destinationBuffer.Rows) == t.bufferSize {

@@ -17,3 +17,12 @@ https://patents.google.com/patent/US20030079041A1/en
 
 This project's goal is to create a simulation of TCP in golang to demonstrate how
 it all works.
+
+# examples
+
+```
+./ack transfer --wire_speed=100
+./ack transfer --wire_speed=100 --buffer_size=1000
+./ack transfer --wire_speed=100 --buffer_size=1000 --process_speed=100
+./ack transfer --wire_speed=10 --buffer_size=1000 --process_speed=100
+```
