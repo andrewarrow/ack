@@ -20,7 +20,7 @@ type TransferWithOptions struct {
 	step               int
 }
 
-func NewTransferWithOptions() *TransferWithOptions {
+func NewTransferWithOptions(bufferSize int) *TransferWithOptions {
 	t := TransferWithOptions{}
 	t.source = widgets.NewList()
 	t.transfer = widgets.NewList()

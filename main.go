@@ -4,6 +4,7 @@ import (
 	"ack/screen"
 	"math/rand"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -15,6 +16,7 @@ func main() {
 		return
 	}
 	command := os.Args[1]
+	argMap := ArgsToMap()
 
 	if command == "run" {
 		t := screen.NewTransfer()
@@ -23,7 +25,8 @@ func main() {
 		c := screen.NewCredits()
 		c.Run()
 	} else if command == "transfer" {
-		t := screen.NewTransferWithOptions()
+		bufferSize, _ := strconv.Atoi(argMap["buffer_size"])
+		t := screen.NewTransferWithOptions(bufferSize)
 		t.Run()
 	} else if command == "help" {
 		PrintHelp()
