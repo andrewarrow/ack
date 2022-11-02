@@ -18,6 +18,7 @@ type TransferWithOptions struct {
 	destinationBuffer  *widgets.List
 	destinationProgram *widgets.List
 	step               int
+	bufferSize         int
 }
 
 func NewTransferWithOptions(bufferSize int) *TransferWithOptions {
@@ -27,6 +28,7 @@ func NewTransferWithOptions(bufferSize int) *TransferWithOptions {
 	t.destinationBuffer = widgets.NewList()
 	t.destinationProgram = widgets.NewList()
 	t.step = 301
+	t.bufferSize = bufferSize
 	return &t
 }
 
@@ -89,12 +91,12 @@ func (t *TransferWithOptions) Run() {
 func (t *TransferWithOptions) advanceTransfer() {
 	mutex.Lock()
 	defer mutex.Unlock()
-	if len(t.destinationBuffer.Rows) == 10 {
+	if len(t.destinationBuffer.Rows) == t.bufferSize {
 		return
 	}
 	t.destinationBuffer.Rows = append([]string{fmt.Sprintf("Seg %03d", t.step)}, t.destinationBuffer.Rows...)
 	fullString := ""
-	if len(t.destinationBuffer.Rows) == 10 {
+	if len(t.destinationBuffer.Rows) == t.bufferSize {
 		fullString = "FULL"
 	}
 	t.destinationBuffer.Title = fmt.Sprintf("Size %d %s", len(t.destinationBuffer.Rows), fullString)

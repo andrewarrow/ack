@@ -26,6 +26,9 @@ func main() {
 		c.Run()
 	} else if command == "transfer" {
 		bufferSize, _ := strconv.Atoi(argMap["buffer_size"])
+		if bufferSize == 0 {
+			bufferSize = 10
+		}
 		t := screen.NewTransferWithOptions(bufferSize)
 		t.Run()
 	} else if command == "help" {
