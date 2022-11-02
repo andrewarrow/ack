@@ -23,6 +23,7 @@ type TransferWithOptions struct {
 	processSpeed       int
 	totalSegments      int
 	segments           int
+	showSize           bool
 }
 
 func NewTransferWithOptions(bufferSize, wireSpeed, processSpeed int) *TransferWithOptions {
@@ -38,11 +39,18 @@ func NewTransferWithOptions(bufferSize, wireSpeed, processSpeed int) *TransferWi
 	return &t
 }
 
+func (t *TransferWithOptions) wait10ThenShowSize() {
+	time.Sleep(10 * time.Second)
+	t.showSize = true
+}
+
 func (t *TransferWithOptions) Run() {
 	if err := ui.Init(); err != nil {
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
+
+	go t.wait10ThenShowSize()
 
 	setList("Source (server)", t.source)
 	t.source.Rows = append(t.source.Rows, "102.7 MB")
@@ -116,7 +124,9 @@ func (t *TransferWithOptions) advanceTransfer() {
 	if len(t.destinationBuffer.Rows) == t.bufferSize {
 		fullString = "FULL"
 	}
-	t.destinationBuffer.Title = fmt.Sprintf("Size %d %s", len(t.destinationBuffer.Rows), fullString)
+	if t.showSize {
+		t.destinationBuffer.Title = fmt.Sprintf("Size %d %s", len(t.destinationBuffer.Rows), fullString)
+	}
 	t.step++
 }
 
@@ -127,10 +137,12 @@ func (t *TransferWithOptions) readBuffer() {
 	if len(t.destinationBuffer.Rows) > 0 {
 		item = t.destinationBuffer.Rows[len(t.destinationBuffer.Rows)-1]
 		t.destinationBuffer.Rows = t.destinationBuffer.Rows[0 : len(t.destinationBuffer.Rows)-1]
-		t.destinationBuffer.Title = fmt.Sprintf("Size %d", len(t.destinationBuffer.Rows))
 	}
 	if item != "" {
 		t.destinationProgram.Rows = append([]string{item}, t.destinationProgram.Rows...)
 	}
-	t.destinationProgram.Title = fmt.Sprintf("Size %d", len(t.destinationProgram.Rows))
+	if t.showSize {
+		t.destinationBuffer.Title = fmt.Sprintf("Size %d", len(t.destinationBuffer.Rows))
+		t.destinationProgram.Title = fmt.Sprintf("Size %d", len(t.destinationProgram.Rows))
+	}
 }
