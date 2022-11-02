@@ -19,9 +19,11 @@ type TransferWithOptions struct {
 	destinationProgram *widgets.List
 	step               int
 	bufferSize         int
+	wireSpeed          int
+	processSpeed       int
 }
 
-func NewTransferWithOptions(bufferSize int) *TransferWithOptions {
+func NewTransferWithOptions(bufferSize, wireSpeed, processSpeed int) *TransferWithOptions {
 	t := TransferWithOptions{}
 	t.source = widgets.NewList()
 	t.transfer = widgets.NewList()
@@ -29,6 +31,8 @@ func NewTransferWithOptions(bufferSize int) *TransferWithOptions {
 	t.destinationProgram = widgets.NewList()
 	t.step = 301
 	t.bufferSize = bufferSize
+	t.wireSpeed = wireSpeed
+	t.processSpeed = processSpeed
 	return &t
 }
 
@@ -66,8 +70,8 @@ func (t *TransferWithOptions) Run() {
 
 	ui.Render(grid)
 	uiEvents := ui.PollEvents()
-	ticker1 := time.NewTicker(time.Millisecond * 944).C
-	ticker2 := time.NewTicker(time.Millisecond * 3944).C
+	wireSpeedTicker := time.NewTicker(time.Millisecond * time.Duration(t.wireSpeed)).C
+	processSpeedTicker := time.NewTicker(time.Millisecond * time.Duration(t.processSpeed)).C
 	for {
 		select {
 		case e := <-uiEvents:
@@ -79,9 +83,9 @@ func (t *TransferWithOptions) Run() {
 				grid.SetRect(0, 0, payload.Width, payload.Height)
 				ui.Clear()
 			}
-		case <-ticker1:
+		case <-wireSpeedTicker:
 			t.advanceTransfer()
-		case <-ticker2:
+		case <-processSpeedTicker:
 			t.readBuffer()
 		}
 		ui.Render(grid)

@@ -26,7 +26,9 @@ func main() {
 		c.Run()
 	} else if command == "transfer" {
 		bufferSize := util.Atoi(argMap["buffer_size"], 10)
-		t := screen.NewTransferWithOptions(bufferSize)
+		wireSpeed := util.Atoi(argMap["wire_speed"], 944)
+		processSpeed := util.Atoi(argMap["process_speed"], 3944)
+		t := screen.NewTransferWithOptions(bufferSize, wireSpeed, processSpeed)
 		t.Run()
 	} else if command == "help" {
 		PrintHelp()
