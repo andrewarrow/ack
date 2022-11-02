@@ -55,6 +55,11 @@ func (t *TransferWithOptions) Run() {
 	t.segments = 200644
 	setList("", t.transfer)
 	t.transfer.Border = false
+	for i := 0; i < 10; i++ {
+		t.transfer.Rows = append(t.transfer.Rows, "")
+	}
+	t.transfer.Rows = append(t.transfer.Rows, "        --------->")
+
 	setList("Destination (buffer)", t.destinationBuffer)
 	setList("Destination (program)", t.destinationProgram)
 
@@ -104,7 +109,8 @@ func (t *TransferWithOptions) advanceTransfer() {
 		return
 	}
 	t.segments--
-	t.source.Rows[5] = fmt.Sprintf("%d", t.segments)
+	percent := (float64(t.segments) / float64(t.totalSegments)) * 100.0
+	t.source.Rows[5] = fmt.Sprintf("%d %.2f%%", t.segments, percent)
 	t.destinationBuffer.Rows = append([]string{fmt.Sprintf("Seg %03d", t.step)}, t.destinationBuffer.Rows...)
 	fullString := ""
 	if len(t.destinationBuffer.Rows) == t.bufferSize {
